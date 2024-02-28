@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 import org.zythos.cryptodealer_api.entity.CryptoCurrency;
 import org.zythos.cryptodealer_api.repository.CryptoCurrencyRepository;
 import reactor.core.CorePublisher;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
 
 @Component
 public class CryptoCurrencyDAO {
@@ -15,24 +18,84 @@ public class CryptoCurrencyDAO {
     private final ConnectionFactory connectionFactory;
     private final CryptoCurrencyRepository cryptoCurrencyRepository;
 
+    private DatabaseClient databaseClient;
+
     public CryptoCurrencyDAO(ConnectionFactory connectionFactory, CryptoCurrencyRepository cryptoCurrencyRepository) {
         this.connectionFactory = connectionFactory;
-        DatabaseClient databaseClient = DatabaseClient.create(connectionFactory);
+        databaseClient = DatabaseClient.create(connectionFactory);
 
-        Mono result = databaseClient
-                .sql("CREATE TABLE IF NOT EXISTS crypto(id bigint primary key auto_increment )")...
+        Mono result = (Mono) databaseClient.sql("CREATE TABLE IF NOT EXISTS crypto(id bigint AUTO_INCREMENT PRIMARY KEY, crypto_name VARCHAR(20), available_stock DOUBLE PRECISION, current_value DOUBLE PRECISION, log_time TIMESTAMP )").then().subscribe();
 
         this.cryptoCurrencyRepository = cryptoCurrencyRepository;
 
     }
 
-
     public Mono<CryptoCurrency> findByName(String cryptoName) {
+        return cryptoCurrencyRepository.findByNameIs(cryptoName);
     }
 
-    public CorePublisher<Object> save(CryptoCurrency crypto) {
+    public Mono<CryptoCurrency> save(CryptoCurrency newCrypto) {
+        return cryptoCurrencyRepository.save(newCrypto);
     }
 
-    public Mono<CryptoCurrency> findByNameIs(String crypto) {
+    public Flux<CryptoCurrency> findByNameLastValue(String cryptoName) {
+
+        return databaseClient.sql("SELECT id, crypto_name, available_stock, current_value, log_time " +
+                "FROM crypto" +
+                "WHERE crypto_name = ':cryptoName'" +
+                "ORDER BY log_time DESC" +
+                "LIMIT 1;")
+                .bind("cryptoName", cryptoName)
+                .fetch()
+                .all()
+                .map(cr -> CryptoCurrency.builder()
+                        .id(Long.valueOf(cr.get("id").toString()))
+                        .name(cr.get("crypto_name").toString())
+                        .availableStock(Double.valueOf(cr.get("available_stock").toString()))
+                        .currentValue(Double.valueOf(cr.get("current_value").toString()))
+                        .logTime(LocalDateTime.parse(cr.get("log_time").toString()))
+                        .build());
+    }
+
+    public Flux<CryptoCurrency> findCryptoByNameForPeriode(String cryptoName, LocalDateTime afterThat) {
+
+        return databaseClient.sql("SELECT id, crypto_name, available_stock, current_value, log_time " +
+                        "FROM crypto" +
+                        "WHERE crypto_name = :cryptoName" +
+                        "AND log_time >= :afterThat" +
+                        "ORDER BY log_time DESC" +
+                        "LIMIT 1;")
+                .bind("cryptoName", cryptoName)
+                .bind("afterThat", afterThat)
+                .fetch()
+                .all()
+                .map(cr -> CryptoCurrency.builder()
+                        .id(Long.valueOf(cr.get("id").toString()))
+                        .name(cr.get("crypto_name").toString())
+                        .availableStock(Double.valueOf(cr.get("available_stock").toString()))
+                        .currentValue(Double.valueOf(cr.get("current_value").toString()))
+                        .logTime(LocalDateTime.parse(cr.get("log_time").toString()))
+                        .build());
+
+
+    }
+
+    public Flux<CryptoCurrency> getAllCryptoLastValue() {
+        return databaseClient.sql("SELECT c.* " +
+                        "FROM crypto c " +
+                        "INNER JOIN ( " +
+                        "    SELECT crypto_name, MAX(log_time) AS max_log_time " +
+                        "    FROM crypto " +
+                        "    GROUP BY crypto_name " +
+                        ") max_log ON c.crypto_name = max_log.crypto_name AND c.log_time = max_log.max_log_time;")
+                .fetch()
+                .all()
+                .map(cr -> CryptoCurrency.builder()
+                        .id(Long.valueOf(cr.get("id").toString()))
+                        .name(cr.get("crypto_name").toString())
+                        .availableStock(Double.valueOf(cr.get("available_stock").toString()))
+                        .currentValue(Double.valueOf(cr.get("current_value").toString()))
+                        .logTime(LocalDateTime.parse(cr.get("log_time").toString()))
+                        .build());
     }
 }

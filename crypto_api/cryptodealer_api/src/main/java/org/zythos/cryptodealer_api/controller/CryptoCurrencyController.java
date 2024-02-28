@@ -18,17 +18,32 @@ public class CryptoCurrencyController {
 
     private final CryptoCurrencyService cryptoCurrencyService;
 
-    @GetMapping
+    @GetMapping // GET localhost:8099/api/cryptos
     public Flux<CryptoCurrency> getAll(){
         return cryptoCurrencyService.getAll();
     }
 
-    @GetMapping("{crypto}")
-    public Mono<CryptoCurrency> get(@PathVariable String crypto) {
-        return cryptoCurrencyService.findByName(crypto);
+    @GetMapping("{cryptoName}") // GET localhost:8099/api/cryptos/{crypto}?minutes=0?hours=0?days=0
+    public Flux<CryptoCurrency> get(@PathVariable String cryptoName,
+                                    @RequestAttribute(value = "minutes", required = false) int minutes,
+                                    @RequestAttribute(value = "hours", required = false) int hours,
+                                    @RequestAttribute(value = "days", required = false) int days) {
+
+        Long totalMinutes = (long) (minutes + hours * 60 + days * 24 * 60);
+
+       return cryptoCurrencyService.getCryptoLastActivity(cryptoName,totalMinutes);
+
+
     }
 
-    @PostMapping
+    @GetMapping("{cryptoName}/buy") // GET localhost:8099/api/cryptos/{crypto}/buy?price=100
+
+
+    @GetMapping("{cryptoName}/sold") // GET localhost:8099/api/cryptos/{crypto}/sold?qty=100
+
+
+
+    @PostMapping // POST localhost:8099/api/cryptos
     public ResponseEntity<CryptoCurrency> addCrypto(@RequestBody String cryptoName) {
         try {
             CryptoCurrency crypto = cryptoCurrencyService.save(cryptoName).blockOptional().get();
@@ -37,6 +52,8 @@ public class CryptoCurrencyController {
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
 
 
