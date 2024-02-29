@@ -6,7 +6,10 @@ import org.springframework.stereotype.Component;
 import org.zythos.cryptoaddict_api.dto.CustomerDTO;
 import org.zythos.cryptoaddict_api.entity.Customer;
 import org.zythos.cryptoaddict_api.repository.CustomerRepository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.UUID;
 
 @Component
 public class CustomerDAO {
@@ -39,13 +42,31 @@ public class CustomerDAO {
     }
 
     public Mono<Customer> findByEmail(String customerEmail) {
-        return customerRepository.findByEmailIs(customerEmail);
+        return customerRepository.findByEmailIs(customerEmail);}
+
+    public Flux<Customer> findAllCustomers (){
+        return customerRepository.findAll();
     }
 
-//    public Mono<Void> createNewCustomer(Customer customer){
-//        return customerRepository.save(customer).then();
-//    }
+    public Mono<Customer> findCustomerByEmailAndPassword(String email, String password) {
 
+        return databaseClient.sql("SELECT id, firstname, lastname, email, password, piggy_bank " +
+                        "From customer " +
+                        "WHERE email = :email " +
+                        "AND password = :password;")
+                .bind("email", email)
+                .bind("password", password)
+                .fetch()
+                .one()
+                .map(c -> Customer.builder()
+                        .id(Integer.parseInt((c.get("id").toString())))
+                        .firstName(c.get("firstname").toString())
+                        .lastName(c.get("lastname").toString())
+                        .email(c.get("email").toString())
+                        .password(c.get("password").toString())
+                        .piggyBank((Double) c.get("piggy_bank"))
+                        .build());
+    }
 
-}
+    }
 

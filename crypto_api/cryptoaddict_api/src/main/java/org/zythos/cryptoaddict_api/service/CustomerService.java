@@ -6,6 +6,8 @@ import org.zythos.cryptoaddict_api.dao.CustomerDAO;
 import org.zythos.cryptoaddict_api.dto.CustomerDTO;
 import org.zythos.cryptoaddict_api.entity.Customer;
 import org.zythos.cryptoaddict_api.exception.CustomerEmailExist;
+import org.zythos.cryptoaddict_api.exception.CustomerEmailOrPasswordIsWrong;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -28,11 +30,34 @@ public class CustomerService {
                     .password(password)
                     .piggyBank(piggyBank).build();
 
-            customerDAO.save(newCustomer);
+          return  customerDAO.save(newCustomer);
 
         }
         throw new CustomerEmailExist(email);
     }
 
+    public Flux<Customer> getAllCustomer() {
+        Flux<Customer> customers = customerDAO.findAllCustomers();
+        return customers;
+    }
+
+
+
+    public Mono<Customer> getCustomerByEmailAndPasswors(String email, String password) throws CustomerEmailOrPasswordIsWrong {
+
+        Mono<Customer> customerMono = customerDAO.findCustomerByEmailAndPassword(email,password);
+
+        Customer customer = (Customer) customerMono.block();
+
+        try {
+            if (customer != null) {
+                return customerMono;
+            }
+        }catch (Exception e){
+            throw new CustomerEmailOrPasswordIsWrong(email,password);
+        }
+        return customerMono;
+
+    }
 
 }

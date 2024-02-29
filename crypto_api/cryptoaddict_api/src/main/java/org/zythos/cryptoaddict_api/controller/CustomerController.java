@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import org.zythos.cryptoaddict_api.dto.CustomerDTO;
 import org.zythos.cryptoaddict_api.entity.Customer;
 import org.zythos.cryptoaddict_api.exception.CustomerEmailExist;
+import org.zythos.cryptoaddict_api.exception.CustomerEmailOrPasswordIsWrong;
 import org.zythos.cryptoaddict_api.service.CustomerService;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("api/customer")
@@ -30,5 +32,13 @@ public class CustomerController {
 //    @GetMapping("/{id}")
 //    public Flux<Customer> getCustomerById
 
+    @GetMapping("/customers")// GET localhost:8010/api/customer/customers
+    public Flux<Customer> getAll(){
+        return customerService.getAllCustomer();
+    }
 
+    @GetMapping("/customer")
+    public Mono<Customer> getCustomerByEmailAndPassword(@RequestParam String email, @RequestParam String password) throws CustomerEmailOrPasswordIsWrong {
+        return customerService.getCustomerByEmailAndPasswors(email,password);
+    }
 }
