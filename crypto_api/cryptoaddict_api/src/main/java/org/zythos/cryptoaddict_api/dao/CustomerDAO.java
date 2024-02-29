@@ -4,6 +4,7 @@ import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
 import org.zythos.cryptoaddict_api.dto.CustomerDTO;
+import org.zythos.cryptoaddict_api.dto.LogInfoDTO;
 import org.zythos.cryptoaddict_api.entity.Customer;
 import org.zythos.cryptoaddict_api.repository.CustomerRepository;
 import reactor.core.publisher.Flux;
@@ -26,7 +27,13 @@ public class CustomerDAO {
         databaseClient = DatabaseClient.create(connectionFactory);
 
         Mono result = (Mono) databaseClient
-                .sql("CREATE TABLE IF NOT EXISTS customer(id int primary key auto_increment, firstname VARCHAR(50), lastname VARCHAR(50), email VARCHAR(155), password VARCHAR(50), piggy_bank DOUBLE PRECISION)")
+                .sql("CREATE TABLE IF NOT EXISTS customer(id BIGINT primary key auto_increment, " +
+                        "customer_token VARCHAR(155), " +
+                        "firstname VARCHAR(50), " +
+                        "lastname VARCHAR(50), " +
+                        "email VARCHAR(155), " +
+                        "password VARCHAR(50), " +
+                        "piggy_bank DOUBLE PRECISION)")
                 .then().doOnSuccess((Void) ->  {
                     System.out.println("Création de la table Ok");
                 }).doOnError((Void) ->  {
@@ -59,13 +66,19 @@ public class CustomerDAO {
                 .fetch()
                 .one()
                 .map(c -> Customer.builder()
-                        .id(Integer.parseInt((c.get("id").toString())))
+                        .id((Long) c.get("id"))
+                        .customerToken(c.get("customer_token").toString())
                         .firstName(c.get("firstname").toString())
                         .lastName(c.get("lastname").toString())
                         .email(c.get("email").toString())
                         .password(c.get("password").toString())
                         .piggyBank((Double) c.get("piggy_bank"))
                         .build());
+    }
+
+    public Mono<String> getTokenWhenAuth(LogInfoDTO logInfoDTO){
+        Mono<Customer> customerMono = findCustomerByEmailAndPassword(logInfoDTO.getEmail(), logInfoDTO.getPassword());
+        return Mono.just(customerMono.block().getCustomerToken()) ;
     }
 
     }

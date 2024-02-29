@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface CustomerRepository extends R2dbcRepository<Customer, Long> {
 
-    Mono<Customer> findByIdIs(int id);
+    Mono<Customer> findByIdIs(Long id);
     Mono<Customer> findByEmailIs(String email);
 
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 public class CustomerDTO {
 
-
+    private String customerToken;
     private String firstName;
     private String lastName;
     private String email;

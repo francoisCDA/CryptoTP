@@ -18,10 +18,12 @@ import java.util.UUID;
 public class Customer {
 
     @Id
-    private int id;
+    private Long id;
+    @Column(value = "customer_token")
+    private String customerToken;
     @Column(value = "firstname")
     private String firstName;
-    @Column(value = "lastName")
+    @Column(value = "lastname")
     private String lastName;
     @Column(value = "email")
     private String email;

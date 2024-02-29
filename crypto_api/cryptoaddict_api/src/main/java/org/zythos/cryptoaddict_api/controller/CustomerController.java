@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zythos.cryptoaddict_api.dto.CustomerDTO;
+import org.zythos.cryptoaddict_api.dto.LogInfoDTO;
 import org.zythos.cryptoaddict_api.entity.Customer;
 import org.zythos.cryptoaddict_api.exception.CustomerEmailExist;
 import org.zythos.cryptoaddict_api.exception.CustomerEmailOrPasswordIsWrong;
@@ -38,7 +39,12 @@ public class CustomerController {
     }
 
     @GetMapping("/customer")
-    public Mono<Customer> getCustomerByEmailAndPassword(@RequestParam String email, @RequestParam String password) throws CustomerEmailOrPasswordIsWrong {
-        return customerService.getCustomerByEmailAndPasswors(email,password);
+    public Mono<Customer> getCustomerByEmailAndPassword(@RequestBody LogInfoDTO logInfoDTO) throws CustomerEmailOrPasswordIsWrong {
+        return customerService.getCustomerByEmailAndPassword(logInfoDTO.getEmail(),logInfoDTO.getPassword());
+    }
+
+    @GetMapping("/customerToken")
+    public Mono<String> auth(@RequestBody LogInfoDTO logInfoDTO) throws CustomerEmailOrPasswordIsWrong {
+        return customerService.getToken(logInfoDTO.getEmail(), logInfoDTO.getPassword());
     }
 }

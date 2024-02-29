@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.zythos.cryptoaddict_api.dao.CustomerDAO;
 import org.zythos.cryptoaddict_api.dto.CustomerDTO;
+import org.zythos.cryptoaddict_api.dto.LogInfoDTO;
 import org.zythos.cryptoaddict_api.entity.Customer;
 import org.zythos.cryptoaddict_api.exception.CustomerEmailExist;
 import org.zythos.cryptoaddict_api.exception.CustomerEmailOrPasswordIsWrong;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +27,7 @@ public class CustomerService {
 
         if (customer == null) {
             Customer newCustomer = Customer.builder()
+                    .customerToken(UUID.randomUUID().toString())
                     .firstName(firstName)
                     .lastName(lastName)
                     .email(email)
@@ -41,9 +45,7 @@ public class CustomerService {
         return customers;
     }
 
-
-
-    public Mono<Customer> getCustomerByEmailAndPasswors(String email, String password) throws CustomerEmailOrPasswordIsWrong {
+    public Mono<Customer> getCustomerByEmailAndPassword(String email, String password) throws CustomerEmailOrPasswordIsWrong {
 
         Mono<Customer> customerMono = customerDAO.findCustomerByEmailAndPassword(email,password);
 
@@ -59,5 +61,13 @@ public class CustomerService {
         return customerMono;
 
     }
+
+    public Mono<String> getToken(String email, String password) throws CustomerEmailOrPasswordIsWrong{
+        return customerDAO.getTokenWhenAuth(LogInfoDTO.builder()
+                .email(email)
+                .password(password)
+                .build());
+    }
+
 
 }
