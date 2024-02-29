@@ -2,7 +2,6 @@ package org.example.cryptowallet_api.service;
 
 import org.example.cryptowallet_api.dao.TransactionDao;
 import org.example.cryptowallet_api.dto.TransactionDTO;
-import org.example.cryptowallet_api.entity.Transaction;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -18,9 +17,9 @@ public class WalletService {
         this.transactionDao = transactionDao;
     }
 
-    public void createNewTransaction(LocalDateTime transactionDate, String cryptoCurrencyName, Double quantity, Double price, String personId){
+    public void createNewTransaction(String transactionDate, String cryptoCurrencyName, Double quantity, Double price, UUID personId){
         transactionDao.createNewTransaction(TransactionDTO.builder()
-                        .transactionDate(transactionDate)
+                        .transactionDate(LocalDateTime.parse(transactionDate))
                         .cryptoCurrencyName(cryptoCurrencyName)
                         .quantity(quantity)
                         .price(price)
