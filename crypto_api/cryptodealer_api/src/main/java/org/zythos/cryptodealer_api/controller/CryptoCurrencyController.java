@@ -36,11 +36,16 @@ public class CryptoCurrencyController {
 
     }
 
-    @GetMapping("{cryptoName}/buy") // GET localhost:8099/api/cryptos/{crypto}/buy?price=100
+    @GetMapping("{cryptoName}/buy") // GET localhost:8099/api/cryptos/{crypto}/buy?euro=100
+    public Double buyCrypto(@PathVariable String cryptoName, @RequestParam("euro") Double euro){
+        return cryptoCurrencyService.buy(cryptoName,euro);
+    }
 
 
-    @GetMapping("{cryptoName}/sold") // GET localhost:8099/api/cryptos/{crypto}/sold?qty=100
-
+    @GetMapping("{cryptoName}/sold") // GET localhost:8099/api/cryptos/{crypto}/sold?quantity=100
+    public Double sendCrypto(@PathVariable String cryptoName, @RequestParam("quantity") Double quantity) {
+        return cryptoCurrencyService.sold(quantity,quantity);
+    }
 
 
     @PostMapping // POST localhost:8099/api/cryptos

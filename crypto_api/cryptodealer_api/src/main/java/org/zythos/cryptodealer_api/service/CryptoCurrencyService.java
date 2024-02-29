@@ -66,4 +66,13 @@ public class CryptoCurrencyService {
         return cryptoCurrencyDAO.findCryptoByNameForPeriode(cryptoName ,afterThat);
 
     }
+
+    public Double buy(String cryptoName, Double euro) {
+
+        
+
+    }
+
+    public Double sold(Double quantity, Double quantity1) {
+    }
 }
