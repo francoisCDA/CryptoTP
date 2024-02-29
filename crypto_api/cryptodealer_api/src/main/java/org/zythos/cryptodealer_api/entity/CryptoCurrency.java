@@ -31,6 +31,6 @@ public class CryptoCurrency {
     private Double currentValue;
 
     @Column(value = "log_time")
-    private LocalDateTime logTime;
+    private Long logTime;
 
 }

@@ -24,7 +24,14 @@ public class CryptoCurrencyDAO {
         this.connectionFactory = connectionFactory;
         databaseClient = DatabaseClient.create(connectionFactory);
 
-        Mono result = (Mono) databaseClient.sql("CREATE TABLE IF NOT EXISTS crypto(id bigint AUTO_INCREMENT PRIMARY KEY, crypto_name VARCHAR(20), available_stock DOUBLE PRECISION, current_value DOUBLE PRECISION, log_time TIMESTAMP )").then().subscribe();
+        Mono result = (Mono) databaseClient.sql("CREATE TABLE IF NOT EXISTS crypto(id bigint AUTO_INCREMENT PRIMARY KEY, crypto_name VARCHAR(20), available_stock DOUBLE PRECISION, current_value DOUBLE PRECISION, log_time BIGINT);")
+                .then().doOnSuccess((Void) ->  {
+                    System.out.println("Création de la table OK");
+                }).doOnError((Void) ->  {
+                    System.out.println("Création de la table Not OK");
+                });
+
+        result.subscribe();
 
         this.cryptoCurrencyRepository = cryptoCurrencyRepository;
 
@@ -49,15 +56,15 @@ public class CryptoCurrencyDAO {
                 .fetch()
                 .all()
                 .map(cr -> CryptoCurrency.builder()
-                        .id(Long.valueOf(cr.get("id").toString()))
+                       // .id(Long.valueOf(cr.get("id").toString()))
                         .name(cr.get("crypto_name").toString())
                         .availableStock(Double.valueOf(cr.get("available_stock").toString()))
                         .currentValue(Double.valueOf(cr.get("current_value").toString()))
-                        .logTime(LocalDateTime.parse(cr.get("log_time").toString()))
+                        .logTime(Long.valueOf(cr.get("log_time").toString()))
                         .build());
     }
 
-    public Flux<CryptoCurrency> findCryptoByNameForPeriode(String cryptoName, LocalDateTime afterThat) {
+    public Flux<CryptoCurrency> findCryptoByNameForPeriode(String cryptoName, Long afterThat) {
 
         return databaseClient.sql("SELECT id, crypto_name, available_stock, current_value, log_time " +
                         "FROM crypto" +
@@ -70,11 +77,11 @@ public class CryptoCurrencyDAO {
                 .fetch()
                 .all()
                 .map(cr -> CryptoCurrency.builder()
-                        .id(Long.valueOf(cr.get("id").toString()))
+                      //  .id(Long.valueOf(cr.get("id").toString()))
                         .name(cr.get("crypto_name").toString())
                         .availableStock(Double.valueOf(cr.get("available_stock").toString()))
                         .currentValue(Double.valueOf(cr.get("current_value").toString()))
-                        .logTime(LocalDateTime.parse(cr.get("log_time").toString()))
+                        .logTime(Long.valueOf(cr.get("log_time").toString()))
                         .build());
 
 
@@ -91,11 +98,11 @@ public class CryptoCurrencyDAO {
                 .fetch()
                 .all()
                 .map(cr -> CryptoCurrency.builder()
-                        .id(Long.valueOf(cr.get("id").toString()))
+                       // .id(Long.valueOf(cr.get("id").toString()))
                         .name(cr.get("crypto_name").toString())
                         .availableStock(Double.valueOf(cr.get("available_stock").toString()))
                         .currentValue(Double.valueOf(cr.get("current_value").toString()))
-                        .logTime(LocalDateTime.parse(cr.get("log_time").toString()))
+                        .logTime(Long.valueOf(cr.get("log_time").toString()))
                         .build());
     }
 }
