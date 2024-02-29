@@ -1,0 +1,51 @@
+UUID {
+	person Id
+	crypto Name
+	
+	{
+		transactionDate
+		quantity
+		price
+	}
+	{
+		transactionDate
+		quantity
+		price
+	}
+	{
+		transactionDate
+		quantity
+		price
+	}
+
+
+    }
+
+UUID{
+
+	person Id
+	crypto Name
+	transactionDate
+	quantity
+	price
+    }
+
+
+UUID{
+
+	person Id
+	crypto Name
+	transactionDate
+	quantity
+	price
+    }
+
+
+UUID{
+
+	person Id
+	crypto Name
+	transactionDate
+	quantity
+	price
+    }
