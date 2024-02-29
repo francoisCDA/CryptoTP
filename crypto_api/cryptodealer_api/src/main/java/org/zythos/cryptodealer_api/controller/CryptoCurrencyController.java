@@ -41,7 +41,6 @@ public class CryptoCurrencyController {
         return cryptoCurrencyService.buy(cryptoName,euro);
     }
 
-
     @GetMapping("{cryptoName}/sold") // GET localhost:8099/api/cryptos/{crypto}/sold?quantity=100
     public Double sendCrypto(@PathVariable String cryptoName, @RequestParam("quantity") Double quantity) {
         return cryptoCurrencyService.sold(cryptoName,quantity);
