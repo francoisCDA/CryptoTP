@@ -25,9 +25,9 @@ public class CryptoCurrencyController {
 
     @GetMapping("{cryptoName}") // GET localhost:8099/api/cryptos/{crypto}?minutes=0?hours=0?days=0
     public Flux<CryptoCurrency> get(@PathVariable String cryptoName,
-                                    @RequestAttribute(value = "minutes", required = false) int minutes,
-                                    @RequestAttribute(value = "hours", required = false) int hours,
-                                    @RequestAttribute(value = "days", required = false) int days) {
+                                    @RequestParam(value = "minutes",defaultValue = "0") Integer minutes,
+                                    @RequestParam(value = "hours", defaultValue = "0") Integer hours,
+                                    @RequestParam(value = "days", defaultValue = "0") Integer days) {
 
         Long totalMinutes = (long) (minutes + hours * 60 + days * 24 * 60);
 

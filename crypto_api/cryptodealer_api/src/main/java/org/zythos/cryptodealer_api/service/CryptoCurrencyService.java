@@ -75,7 +75,7 @@ public class CryptoCurrencyService {
     public Double buy(String cryptoName, Double euro) {
         CryptoCurrency cryptoToBuy = cryptoCurrencyDAO.findByNameLastValue(cryptoName).blockFirst();
 
-        Double cryptoQuantity = cryptoToBuy.getCurrentValue() * euro;
+        Double cryptoQuantity = euro / cryptoToBuy.getCurrentValue() ;
         Double newQuantity = cryptoToBuy.getAvailableStock()-cryptoQuantity;
 
         if (newQuantity < 0 ) throw new OutOfStockException(cryptoName);

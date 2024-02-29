@@ -48,15 +48,15 @@ public class CryptoCurrencyDAO {
     public Flux<CryptoCurrency> findByNameLastValue(String cryptoName) {
 
         return databaseClient.sql("SELECT id, crypto_name, available_stock, current_value, log_time " +
-                "FROM crypto" +
-                "WHERE crypto_name = ':cryptoName'" +
-                "ORDER BY log_time DESC" +
+                "FROM crypto " +
+                "WHERE crypto_name = :cryptoName " +
+                "ORDER BY log_time DESC " +
                 "LIMIT 1;")
                 .bind("cryptoName", cryptoName)
                 .fetch()
                 .all()
                 .map(cr -> CryptoCurrency.builder()
-                       // .id(Long.valueOf(cr.get("id").toString()))
+                        .id(Long.valueOf(cr.get("id").toString()))
                         .name(cr.get("crypto_name").toString())
                         .availableStock(Double.valueOf(cr.get("available_stock").toString()))
                         .currentValue(Double.valueOf(cr.get("current_value").toString()))
@@ -67,11 +67,11 @@ public class CryptoCurrencyDAO {
     public Flux<CryptoCurrency> findCryptoByNameForPeriode(String cryptoName, Long afterThat) {
 
         return databaseClient.sql("SELECT id, crypto_name, available_stock, current_value, log_time " +
-                        "FROM crypto" +
-                        "WHERE crypto_name = :cryptoName" +
-                        "AND log_time >= :afterThat" +
-                        "ORDER BY log_time DESC" +
-                        "LIMIT 1;")
+                        "FROM crypto " +
+                        "WHERE crypto_name = :cryptoName " +
+                        "AND log_time >= :afterThat " +
+                        "ORDER BY log_time DESC " +
+                        ";")
                 .bind("cryptoName", cryptoName)
                 .bind("afterThat", afterThat)
                 .fetch()
@@ -83,8 +83,6 @@ public class CryptoCurrencyDAO {
                         .currentValue(Double.valueOf(cr.get("current_value").toString()))
                         .logTime(Long.valueOf(cr.get("log_time").toString()))
                         .build());
-
-
     }
 
     public Flux<CryptoCurrency> getAllCryptoLastValue() {
