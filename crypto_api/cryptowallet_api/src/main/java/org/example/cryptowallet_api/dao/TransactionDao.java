@@ -28,11 +28,11 @@ public class TransactionDao {
                         .build());
     }
 
-    public Mono<Void> createNewTransaction(TransactionDTO transactionDTO, String personId){
+    public Mono<Void> createNewTransaction(TransactionDTO transactionDTO, UUID personId){
 
         return walletRepository.save(
                 Transaction.builder()
-                        .personId(UUID.fromString(personId))
+                        .personId(personId)
                         .cryptoCurrencyName(transactionDTO.getCryptoCurrencyName())
                         .transactionDate(transactionDTO.getTransactionDate())
                         .quantity(transactionDTO.getQuantity())
