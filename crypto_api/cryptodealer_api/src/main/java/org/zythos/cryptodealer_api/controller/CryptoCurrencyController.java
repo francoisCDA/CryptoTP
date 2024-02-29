@@ -44,12 +44,12 @@ public class CryptoCurrencyController {
 
     @GetMapping("{cryptoName}/sold") // GET localhost:8099/api/cryptos/{crypto}/sold?quantity=100
     public Double sendCrypto(@PathVariable String cryptoName, @RequestParam("quantity") Double quantity) {
-        return cryptoCurrencyService.sold(quantity,quantity);
+        return cryptoCurrencyService.sold(cryptoName,quantity);
     }
 
 
-    @PostMapping // POST localhost:8099/api/cryptos
-    public ResponseEntity<CryptoCurrency> addCrypto(@RequestBody String cryptoName) {
+    @PostMapping // POST localhost:8099/api/cryptos?new=cryptoname
+    public ResponseEntity<CryptoCurrency> addCrypto(@RequestParam("new") String cryptoName) {
         try {
             CryptoCurrency crypto = cryptoCurrencyService.save(cryptoName).blockOptional().get();
             return new ResponseEntity<>(crypto, HttpStatus.OK);
