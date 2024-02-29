@@ -8,7 +8,7 @@ import reactor.core.publisher.Flux;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/wallet")
+@RequestMapping("api/wallets")
 public class WalletRestController {
 
     private final WalletService walletService;
@@ -18,17 +18,23 @@ public class WalletRestController {
     }
 
 
-    @GetMapping("{idPerson}/{cryptoCurrencyName}") // http://localhost:8098/api/wallet/{idPerson}/{cryptoCurrencyName}
-    public Flux<TransactionDTO> getAll(@PathVariable("idPerson") UUID idPerson, @PathVariable("cryptoCurrencyName") String cryptoCurrencyName) {
-        return walletService.getCryptoWalletByPersonId(idPerson, cryptoCurrencyName);
+    @GetMapping("{idCustomer}/{cryptoCurrencyName}") // http://localhost:808083/api/wallets/{idCustomer}/{cryptoCurrencyName}
+    public Flux<TransactionDTO> getAll(@PathVariable("idCustomer")String idCustomer, @PathVariable("cryptoCurrencyName") String cryptoCurrencyName) {
+        return walletService.getCryptoWalletByPersonId(idCustomer, cryptoCurrencyName);
     }
 
-    @PostMapping("post") // http://localhost:8083/api/wallet
+    @GetMapping("{idCustomer}")// http://localhost:8083/api/wallets
+    public Flux<TransactionDTO> getAll(@PathVariable("idCustomer")String idCustomer){
+        return walletService.getWalletsByIdCustomer(idCustomer);
+    }
+
+
+    @PostMapping("post") // http://localhost:8083/api/wallets
     public void postTransaction(@RequestBody TransactionDTO transactionDTO){
         walletService.createNewTransaction(String.valueOf(transactionDTO.getTransactionDate()),
                         transactionDTO.getCryptoCurrencyName(),
                         transactionDTO.getQuantity(),
-                        transactionDTO.getPrice(), UUID.randomUUID());
+                        transactionDTO.getPrice(), transactionDTO.getIdCustomer());
     }
 
 }

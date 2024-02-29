@@ -15,10 +15,9 @@ public class Transaction {
 
     @Id
     private String id;
-    private UUID personId; // FakeTokenByFrancois
+    private String idCustomer; // FakeTokenByFrancois
     private String cryptoCurrencyName;
     private LocalDateTime transactionDate;
     private Double quantity;
     private Double price;
-
 }
