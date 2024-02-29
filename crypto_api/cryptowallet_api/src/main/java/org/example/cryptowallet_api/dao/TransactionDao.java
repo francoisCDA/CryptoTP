@@ -18,8 +18,8 @@ public class TransactionDao {
         this.walletRepository = walletRepository;
     }
 
-    public Flux<TransactionDTO> getCryptoWalletByPersonId(UUID id, String cryptoCurrencyName){
-        return walletRepository.findAllByPersonIdAndCryptoCurrencyName(id, cryptoCurrencyName)
+    public Flux<TransactionDTO> getCryptoWalletByPersonId(String idCustomer, String cryptoCurrencyName){
+        return walletRepository.findAllByIdCustomerAndCryptoCurrencyName(idCustomer, cryptoCurrencyName)
                 .map(wallet -> TransactionDTO.builder()
                         .transactionDate(wallet.getTransactionDate())
                         .cryptoCurrencyName(wallet.getCryptoCurrencyName())
@@ -28,11 +28,20 @@ public class TransactionDao {
                         .build());
     }
 
-    public Mono<Void> createNewTransaction(TransactionDTO transactionDTO, UUID personId){
+    public Flux<TransactionDTO> getWalletsByCustomer(String idCustomer){
+        return walletRepository.findGroupedTransactionsByIdCustomer(idCustomer)
+                .map(wallet -> TransactionDTO.builder()
+                        .transactionDate(wallet.getTransactionDate())
+                        .cryptoCurrencyName(wallet.getCryptoCurrencyName())
+                        .quantity(wallet.getQuantity())
+                        .price(wallet.getPrice())
+                        .build());
+    }
 
+    public Mono<Void> createNewTransaction(TransactionDTO transactionDTO, String idCustomer){
         return walletRepository.save(
                 Transaction.builder()
-                        .personId(personId)
+                        .idCustomer(idCustomer)
                         .cryptoCurrencyName(transactionDTO.getCryptoCurrencyName())
                         .transactionDate(transactionDTO.getTransactionDate())
                         .quantity(transactionDTO.getQuantity())
@@ -40,6 +49,7 @@ public class TransactionDao {
                         .build()
         ).then();
     }
+
 
 }
 
