@@ -1,20 +1,17 @@
 package org.zythos.crypto_app_api.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.zythos.crypto_app_api.dto.CryptoProfileDTO;
-import org.zythos.crypto_app_api.dto.TransactionDTO;
+import org.springframework.web.bind.annotation.*;
+import org.zythos.crypto_app_api.dto.*;
 import org.zythos.crypto_app_api.service.CryptoAddictService;
 import org.zythos.crypto_app_api.service.CryptoDealerService;
 import org.zythos.crypto_app_api.service.CryptoWalletService;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/apiv1")
+@RequestMapping("/api/v1")
 public class CryptoAppController {
 
     public final CryptoWalletService cryptoWalletService;
@@ -27,10 +24,32 @@ public class CryptoAppController {
         this.cryptoDealerService = cryptoDealerService;
     }
 
-    @GetMapping("/{idCustommer}")
-    public Mono<CryptoProfileDTO> get(@PathVariable("idCustommer")UUID idCustommer){
-        Mono<TransactionDTO[]> transactionDTOMono = cryptoWalletService.get(idCustommer, "test");
-
-        return Mono.zip()
+    @PostMapping("/addcustomer")  // http://localhost:8080/api/v1/addcustomer
+    public boolean post(@RequestBody CustomerDTO custommerDTO){
+        return false;
     }
+
+    @PostMapping("/login") // http://localhost:8080/api/v1/login
+    public String login(@RequestBody LogInfoDTO logInfoDTO){
+        return "";
+    }
+
+    @GetMapping("/cryptos") // http://localhost:8080/api/v1/cryptos
+    public List<CryptoCurrencyDTO> getAllCryptos(){
+        return null;
+    }
+
+    @GetMapping("/{cryptoCurrencyName}") // http://localhost:8080/api/v1/*
+    public CryptoCurrencyDTO getCrypto(){
+        return null;
+    }
+
+
+
+    @GetMapping("/{idCustomer}") // // http://localhost:8080/api/v1/*
+    public CryptoProfileDTO get(@PathVariable("idCustomer")UUID idCustomer){
+        return null;
+    }
+
+
 }
