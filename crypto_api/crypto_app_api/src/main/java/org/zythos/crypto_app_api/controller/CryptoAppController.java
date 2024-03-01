@@ -26,13 +26,18 @@ public class CryptoAppController {
 
     @PostMapping("/addcustomer")  // http://localhost:8080/api/v1/addcustomer
     public boolean post(@RequestBody CustomerDTO custommerDTO){
-        return false;
+        cryptoAddictService.post(custommerDTO);
+        return true;
     }
 
     @PostMapping("/login") // http://localhost:8080/api/v1/login
     public String login(@RequestBody LogInfoDTO logInfoDTO){
+
+
+
         return "";
     }
+
     @GetMapping("/{idCustomer}") // // http://localhost:8080/api/v1/*
     public CryptoProfileDTO get(@PathVariable("idCustomer")UUID idCustomer){
         return null;
