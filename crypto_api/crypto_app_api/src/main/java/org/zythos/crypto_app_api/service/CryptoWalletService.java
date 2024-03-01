@@ -3,10 +3,7 @@ package org.zythos.crypto_app_api.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.zythos.crypto_app_api.dto.TransactionDTO;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 @Service
 public class CryptoWalletService {
@@ -18,7 +15,11 @@ public class CryptoWalletService {
         webClient = WebClient.builder().baseUrl("http://localhost:8083/").build();
     }
 
-    public Mono<TransactionDTO[]> get(UUID idCustommer, String cryptoCurrencyName){
-        return webClient.get().uri("wallet/"+idCustommer+"/"+cryptoCurrencyName).retrieve().bodyToMono(TransactionDTO[].class);
+    public Mono<TransactionDTO[]> getCryptoWallet(String customerToken, String cryptoCurrencyName){
+        return webClient.get().uri("api/wallets/"+customerToken+"/"+cryptoCurrencyName).retrieve().bodyToMono(TransactionDTO[].class);
+    }
+
+    public Mono<TransactionDTO[]> getCryptoWallets(String customerToken){
+        return webClient.get().uri("api/wallets/"+customerToken).retrieve().bodyToMono(TransactionDTO[].class);
     }
 }

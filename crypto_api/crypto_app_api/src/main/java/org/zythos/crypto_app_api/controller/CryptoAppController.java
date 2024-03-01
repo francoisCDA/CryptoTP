@@ -25,21 +25,21 @@ public class CryptoAppController {
     }
 
     @PostMapping("/addcustomer")  // http://localhost:8080/api/v1/addcustomer
-    public boolean post(@RequestBody CustomerDTO custommerDTO){
-        cryptoAddictService.post(custommerDTO);
+    public boolean post(@RequestBody CustomerDTO customerDTO){
+        cryptoAddictService.post(customerDTO);
         return true;
     }
 
     @PostMapping("/login") // http://localhost:8080/api/v1/login
-    public String login(@RequestBody LogInfoDTO logInfoDTO){
-
-
-
-        return "";
+    public CustomerDTO login(@RequestBody LogInfoDTO logInfoDTO){
+        return cryptoAddictService.login(logInfoDTO).block();
     }
 
-    @GetMapping("/{idCustomer}") // // http://localhost:8080/api/v1/*
-    public CryptoProfileDTO get(@PathVariable("idCustomer")UUID idCustomer){
+    @GetMapping("/{customerToken}") // // http://localhost:8080/api/v1/*
+    public CustomerDTO get(@PathVariable("customerToken")String customerToken){
+        cryptoWalletService.getCryptoWallets(customerToken).block();
+
+
         return null;
     }
 
