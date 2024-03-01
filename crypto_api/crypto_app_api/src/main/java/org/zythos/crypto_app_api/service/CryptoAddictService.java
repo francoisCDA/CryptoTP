@@ -19,8 +19,12 @@ public class CryptoAddictService {
     }
 
 
-    //TODO : récupération des transactions -> composition avec le customer correspondant
     public Mono<CustomerDTO> login(LogInfoDTO logInfoDTO){
         return webClient.get().uri("api/customer/customer").retrieve().bodyToMono(CustomerDTO.class);
     }
+
+    public Mono<CustomerDTO> getWithToken(String customerToken){
+        return webClient.get().uri("api/customer/customerToken").retrieve().bodyToMono(CustomerDTO.class);
+    }
+
 }

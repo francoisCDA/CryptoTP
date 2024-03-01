@@ -7,6 +7,7 @@ import org.zythos.crypto_app_api.service.CryptoDealerService;
 import org.zythos.crypto_app_api.service.CryptoWalletService;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,15 +32,27 @@ public class CryptoAppController {
     }
 
     @PostMapping("/login") // http://localhost:8080/api/v1/login
-    public CustomerDTO login(@RequestBody LogInfoDTO logInfoDTO){
-        return cryptoAddictService.login(logInfoDTO).block();
+    public CustomerTransactionsDTO login(@RequestBody LogInfoDTO logInfoDTO){
+
+        Mono<CustomerDTO> customerDTOMono = cryptoAddictService.login(logInfoDTO);
+        String customerToken = customerDTOMono.block().getCustomerToken();
+        Mono<TransactionDTO[]> customerTransactionsDTOMono = cryptoWalletService.getCryptoWallets(customerToken);
+
+        return Mono.zip(customerDTOMono, customerTransactionsDTOMono).map(t -> CustomerTransactionsDTO.builder()
+                .email(t.getT1().getEmail())
+                .firstName(t.getT1().getFirstName())
+                .lastName(t.getT1().getLastName())
+                .piggyBank(t.getT1().getPiggyBank())
+                .customerToken(t.getT1().getCustomerToken())
+                .transactionsList(Arrays.asList(t.getT2()))
+                .build()).block();
     }
 
     @GetMapping("/{customerToken}") // // http://localhost:8080/api/v1/*
-    public CustomerDTO get(@PathVariable("customerToken")String customerToken){
+    public CustomerTransactionsDTO get(@PathVariable("customerToken")String customerToken){
+
+        //Mono<CustomerDTO> customerDTOMono = cryptoAddictService
         cryptoWalletService.getCryptoWallets(customerToken).block();
-
-
         return null;
     }
 
