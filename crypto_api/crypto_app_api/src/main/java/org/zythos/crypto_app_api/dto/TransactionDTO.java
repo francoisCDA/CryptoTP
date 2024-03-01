@@ -13,7 +13,7 @@ public class TransactionDTO {
     private String cryptoCurrencyName;
     private Double quantity;
     private Double price;
-    private UUID idPerson;
+    private String customerToken;
 }
 
 
