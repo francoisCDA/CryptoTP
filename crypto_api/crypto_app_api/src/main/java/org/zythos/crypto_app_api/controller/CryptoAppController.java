@@ -33,9 +33,8 @@ public class CryptoAppController {
     public String login(@RequestBody LogInfoDTO logInfoDTO){
         return "";
     }
-
-    @GetMapping("/cryptos") // http://localhost:8080/api/v1/cryptos
-    public List<CryptoCurrencyDTO> getAllCryptos(){
+    @GetMapping("/{idCustomer}") // // http://localhost:8080/api/v1/*
+    public CryptoProfileDTO get(@PathVariable("idCustomer")UUID idCustomer){
         return null;
     }
 
@@ -44,12 +43,14 @@ public class CryptoAppController {
         return null;
     }
 
-
-
-    @GetMapping("/{idCustomer}") // // http://localhost:8080/api/v1/*
-    public CryptoProfileDTO get(@PathVariable("idCustomer")UUID idCustomer){
+    @GetMapping("/cryptos") // http://localhost:8080/api/v1/cryptos
+    public List<CryptoCurrencyDTO> getAllCryptos(){
         return null;
     }
+
+
+
+
 
 
 }
