@@ -17,19 +17,21 @@ public class WalletService {
         this.transactionDao = transactionDao;
     }
 
-    public void createNewTransaction(String transactionDate, String cryptoCurrencyName, Double quantity, Double price, UUID personId){
+    public void createNewTransaction(String transactionDate, String cryptoCurrencyName, Double quantity, Double price, String idCustomer){
         transactionDao.createNewTransaction(TransactionDTO.builder()
                         .transactionDate(LocalDateTime.parse(transactionDate))
                         .cryptoCurrencyName(cryptoCurrencyName)
                         .quantity(quantity)
                         .price(price)
-                .build(), personId).then().subscribe();
+                .build(), idCustomer).then().subscribe();
     }
 
-    public Flux<TransactionDTO> getCryptoWalletByPersonId(UUID personId, String cryptoCurrencyName){
+    public Flux<TransactionDTO> getWalletsByIdCustomer(String idCustomer){
+        return transactionDao.getWalletsByCustomer(idCustomer);
+    }
 
-        return transactionDao.getCryptoWalletByPersonId(personId, cryptoCurrencyName);
-
+    public Flux<TransactionDTO> getCryptoWalletByPersonId(String idCustomer, String cryptoCurrencyName){
+        return transactionDao.getCryptoWalletByPersonId(idCustomer, cryptoCurrencyName);
     }
 
 
